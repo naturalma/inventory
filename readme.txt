@@ -3,6 +3,8 @@
 - Thymeleaf
 - JUnit
 - Ajax
+- JavaScript
+- HTML5
 - Maven
 - Github
 
