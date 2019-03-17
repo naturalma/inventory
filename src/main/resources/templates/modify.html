@@ -1,0 +1,68 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Inventory Browsing</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<script type = "text/javascript">
+
+	function updateSubCat(subcat) {
+		var xhttp = new XMLHttpRequest();
+		xhttp.onreadystatechange = function() {
+			if (this.readyState == 4 && this.status == 200) {
+				var subCatBox = document.getElementById("inv_subcat");
+				subCatBox.innerHTML = '';
+				var list = JSON.parse(this.responseText);
+				for (var i=0; i<list.length; i++) {
+					var option = document.createElement("option");
+					option.innerText = list[i];
+					option.value = list[i];
+					if (option.value == subcat) {
+						option.selected = "selected";
+					}
+					subCatBox.appendChild(option);
+				}
+			}
+		};
+		xhttp.open("GET", "/getSubCategoryList?inv_cat=" + document.getElementById("inv_cat").value, true);
+		xhttp.send();
+	}
+</script>
+</head>
+<body th:onload="'updateSubCat(\'' + ${inv.subCategory} + '\');'" >
+	<h4>Inventory Search</h4>
+	<form action="/commitChange" method="POST">
+	<table>
+	<tr>
+		<td>Category: </td>
+		<td>
+			<select id="inv_cat" name="inv_cat" onchange="updateSubCat('');">
+				<option data-th-each="catName : ${catNameList}" data-th-value="${catName}" data-th-text="${catName}" data-th-selected="${inv.category.equals(catName)}" />
+			</select>
+		</td>
+	</tr><tr>
+		<td>Sub-category: </td>
+		<td>
+			<select id="inv_subcat" name="inv_subcat" ></select> 
+		</td>
+	</tr><tr>
+		<td>Name: </td>
+		<td>
+			<input name="inv_name" type="text" data-th-value="${inv.name}"/> 
+		</td>
+	</tr><tr>
+		<td>Quantity: </td>
+		<td>
+			<input name="inv_quantity" type="number" data-th-value="${inv.quantity}"/> 
+		</td>
+	</tr><tr>
+		<td>
+			<input type="hidden" name="action_type" data-th-value="${type}" />
+			<input type="hidden" name="inv_id" data-th-value="${inv.id}" />
+			<input type="submit" data-th-value="${type}" />
+			<input type="button" value="Cancel" onclick="javascript: window.location.href='/'" />
+		</td>
+	</tr>
+	</table>
+	</form>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Category Configuration</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<script type = "text/javascript">
+
+	function submitAddSubCat(cat) {
+		var subcat = document.getElementById("subcat_" + cat).value;
+		window.location.href = "/addSubCat?cat=" + cat + "&subcat=" + subcat;
+	}
+	
+	function submitAddCat() {
+		var cat = document.getElementById("cat").value;
+		window.location.href = "/addCat?cat=" + cat;
+	}
+</script>
+
+</head>
+<body>
+	<h3>Current Inventory Categories</h3>
+
+   	<div data-th-each="cat : ${catList}">
+	<h4 data-th-text="'Category: ' + ${cat.categoryName}" /> 
+	<a th:href="'/delCat?cat=' + ${cat.categoryName}">Delete Category</a>
+	<ul>
+   	<li data-th-each="subcat : ${cat.validSubCategoryList}">
+   		<span data-th-text="${subcat}" />  
+   		<a th:href="'/delSubCat?cat=' + ${cat.categoryName} + '&subcat=' + ${subcat}">Delete</a>
+   	</li>
+   	<li>
+	   	<input type="text" th:id="'subcat_' + ${cat.categoryName}" />
+	   	<a th:href="'javascript: submitAddSubCat(\'' + ${cat.categoryName} + '\');'">Add</a>
+   	</li>
+	</ul>
+	</div>
+   	<input type="text" id="cat" />
+   	<a href="javascript: submitAddCat();">Add Category</a>
+</body>
+</html>

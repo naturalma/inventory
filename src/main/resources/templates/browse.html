@@ -1,0 +1,59 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Inventory Browsing</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<script type = "text/javascript">
+
+	function updateSubCat() {
+		var xhttp = new XMLHttpRequest();
+		xhttp.onreadystatechange = function() {
+			if (this.readyState == 4 && this.status == 200) {
+				var subCatBox = document.getElementById("inv_subcat");
+				subCatBox.innerHTML = '';
+				var option = document.createElement("option");
+				option.innerText = "Unselected";
+				option.value = "";
+				subCatBox.appendChild(option);
+				var list = JSON.parse(this.responseText);
+				for (var i=0; i<list.length; i++) {
+					var option = document.createElement("option");
+					option.innerText = list[i];
+					option.value = list[i];
+					subCatBox.appendChild(option);
+				}
+			}
+		};
+		xhttp.open("GET", "/getSubCategoryList?inv_cat=" + document.getElementById("inv_cat").value, true);
+		xhttp.send();
+	}
+
+</script>
+</head>
+<body>
+	<h4>Inventory Search</h4>
+	<form action="/">
+		Category: <select id="inv_cat" name="inv_cat" onchange="updateSubCat();">
+		<option value="" >Unselected</option>
+		<option data-th-each="catName : ${catNameList}" data-th-value="${catName}" data-th-text="${catName}" /></select>
+		Sub-category: <select id="inv_subcat" name="inv_subcat"><option value="" >Unselected</option></select> 
+		Name: <input name="inv_name" type="text" /> 
+		Sort By: <input name="sort" type="radio" value="name" checked/> Name <input name="sort" type="radio" value="cat" /> Category
+		<input type="submit" value="Search" />
+	</form>
+
+	<h4>Current Inventory</h4>
+	<table border=1>
+	<tr><th>Name</th><th>Sub Category</th><th>Category</th><th>Quantity</th><th colspan=2>Actions</th></tr>
+   	<tr data-th-each="inv : ${invList}">
+        <td data-th-text="${inv.name}" />
+        <td data-th-text="${inv.category}" />
+        <td data-th-text="${inv.subCategory}" />
+        <td data-th-text="${inv.quantity}" />
+        <td><input type="button" value="Update" data-th-onclick="'javascript: window.location.href=\'/update?id=' + ${inv.id} + '\''" /></td>
+        <td><input type="button" value="Delete" data-th-onclick="'javascript: window.location.href=\'/delete?id=' + ${inv.id} + '\''" /></td>
+    </tr>
+	</table>
+	<input type="button" value="Add" onclick="javascript: window.location.href='/add'" />
+</body>
+</html>
